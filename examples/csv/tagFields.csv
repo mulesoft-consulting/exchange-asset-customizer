@@ -1,0 +1,5 @@
+orgId,assetName,version,fieldKey,fieldVal,fieldType
+
+a83c3c15-a780-499e-8765-36a586ecf211,system-api-sap,1.1.3,Application Code,CP002721,text
+a83c3c15-a780-499e-8765-36a586ecf211,system-api-sap,1.1.3,Last Performance Test,1900-01-01T20:00:00.000Z,date
+a83c3c15-a780-499e-8765-36a586ecf211,system-api-sap,1.1.3,Last Pentest Date,1900-01-01T20:00:00.000Z,date
