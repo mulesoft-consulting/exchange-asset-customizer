@@ -15,6 +15,7 @@ var (
 	ANYPOINT_REGION   string
 	CATEGORIES_FILE   string
 	TAGS_FILE         string
+	ATTRIBUTES_FILE   string
 	SERVER_INDEX      int
 	ANYPOINT_ORG_KEY  anypointContextKey
 )
@@ -40,6 +41,7 @@ func init() {
 	flag.StringVar(&ANYPOINT_REGION, "r", "eu", "anypoint region, by default eu (eu/us)")
 	flag.StringVar(&CATEGORIES_FILE, "catfile", "", "path to categories csv file")
 	flag.StringVar(&TAGS_FILE, "tagfile", "", "path to tags csv file")
+	flag.StringVar(&ATTRIBUTES_FILE, "attrfile", "", "path to attributes csv file")
 	flag.Parse()
 
 	if ANYPOINT_ORG == "" {
@@ -73,7 +75,7 @@ func main() {
 	ctx = context.WithValue(ctx, ANYPOINT_ORG_KEY, ANYPOINT_ORG)
 
 	var client *ExchangeClient
-	if TAGS_FILE != "" || CATEGORIES_FILE != "" {
+	if TAGS_FILE != "" || CATEGORIES_FILE != "" || ATTRIBUTES_FILE != "" {
 		client = newExchangeClient(ctx, ANYPOINT_USERNAME, ANYPOINT_PWD)
 		if err := client.login(); err != nil {
 			panic(err.Error())
@@ -92,6 +94,13 @@ func main() {
 	if CATEGORIES_FILE != "" {
 		fmt.Printf("Process categories based on file %s \n", CATEGORIES_FILE)
 		if err := client.handleCategories(CATEGORIES_FILE); err != nil {
+			panic(err.Error())
+		}
+	}
+
+	if ATTRIBUTES_FILE != "" {
+		fmt.Printf("Process attributes based on file %s \n", ATTRIBUTES_FILE)
+		if err := client.handleAttributes(CATEGORIES_FILE); err != nil {
 			panic(err.Error())
 		}
 	}

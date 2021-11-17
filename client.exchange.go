@@ -108,8 +108,8 @@ func (c *ExchangeClient) addCustomField(organizationId string, dataType string, 
 	return nil
 }
 
-func (c *ExchangeClient) putCustomFieldValue(organizationId string, assetName string, version string, tagKey string, tagValue string) error {
-	u, err := url.Parse(fmt.Sprintf("%s/exchange/api/v2/assets/%s/%s/%s/tags/fields/%s", c.baseurl, url.PathEscape(organizationId), url.PathEscape(assetName), url.PathEscape(version), url.PathEscape(tagKey)))
+func (c *ExchangeClient) putCustomFieldValue(organizationId string, assetName string, version string, key string, value string) error {
+	u, err := url.Parse(fmt.Sprintf("%s/exchange/api/v2/assets/%s/%s/%s/tags/fields/%s", c.baseurl, url.PathEscape(organizationId), url.PathEscape(assetName), url.PathEscape(version), url.PathEscape(key)))
 	if err != nil {
 		return err
 	}
@@ -120,7 +120,7 @@ func (c *ExchangeClient) putCustomFieldValue(organizationId string, assetName st
 		Method:  request.PUT,
 		Bearer:  c.access_token,
 		JSON: &CustomFieldValueBody{
-			TagValue: tagValue,
+			TagValue: value,
 		},
 	}
 	resp := client.Send()
@@ -147,8 +147,8 @@ func (c *ExchangeClient) putCustomFieldValue(organizationId string, assetName st
 	return nil
 }
 
-func (c *ExchangeClient) createCustomCategory(organizationId string, assetName string, version string, tagKey string, tagValue []string) error {
-	u, err := url.Parse(fmt.Sprintf("%s/exchange/api/v2/assets/%s/%s/%s/tags/categories/%s", c.baseurl, url.PathEscape(organizationId), url.PathEscape(assetName), url.PathEscape(version), url.PathEscape(tagKey)))
+func (c *ExchangeClient) createCustomCategory(organizationId string, assetName string, version string, key string, value []string) error {
+	u, err := url.Parse(fmt.Sprintf("%s/exchange/api/v2/assets/%s/%s/%s/tags/categories/%s", c.baseurl, url.PathEscape(organizationId), url.PathEscape(assetName), url.PathEscape(version), url.PathEscape(key)))
 	if err != nil {
 		return err
 	}
@@ -158,7 +158,7 @@ func (c *ExchangeClient) createCustomCategory(organizationId string, assetName s
 		Method:  request.PUT,
 		Bearer:  c.access_token,
 		JSON: &CustomCategoryValueBody{
-			TagValue: tagValue,
+			TagValue: value,
 		},
 	}
 	resp := client.Send()
@@ -173,6 +173,41 @@ func (c *ExchangeClient) createCustomCategory(organizationId string, assetName s
 	if statusCode := resp.Response().StatusCode; statusCode >= 400 {
 		var details string
 		message := "[ERROR] PUT custom-field-value responded with status " + fmt.Sprint(statusCode)
+		details = string(respBody)
+		if details != "" {
+			message += "\ndetails : \n" + details
+		}
+		return errors.New(message)
+	}
+	defer resp.Close()
+
+	return nil
+}
+
+func (c *ExchangeClient) patchAssetAttributes(organizationId string, assetName string, key string, value string) error {
+	u, err := url.Parse(fmt.Sprintf("%s/exchange/api/v2/assets/%s/%s", c.baseurl, url.PathEscape(organizationId), url.PathEscape(assetName)))
+	if err != nil {
+		return err
+	}
+	client := request.Client{
+		Context: *c.ctx,
+		URL:     u.String(),
+		Method:  request.PATCH,
+		Bearer:  c.access_token,
+		JSON:    "{\"" + key + "\":\"" + value + "\"}",
+	}
+	resp := client.Send()
+	if !resp.OK() {
+		return resp.Error()
+	}
+	var result interface{}
+	if err := resp.Scan(&result).Error(); err != nil {
+		return err
+	}
+	respBody, _ := json.Marshal(result)
+	if statusCode := resp.Response().StatusCode; statusCode >= 400 {
+		var details string
+		message := "[ERROR] PATCH attributes responded with status " + fmt.Sprint(statusCode)
 		details = string(respBody)
 		if details != "" {
 			message += "\ndetails : \n" + details
