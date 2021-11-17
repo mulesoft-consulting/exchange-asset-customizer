@@ -30,3 +30,21 @@ type CustomFieldValueBody struct {
 type CustomCategoryValueBody struct {
 	TagValue []string `json:"tagValue"`
 }
+
+type PatchAttributeBody struct {
+	ContactName  string `json:"contactName,omitempty"`
+	ContactEmail string `json:"contactEmail,omitempty"`
+}
+
+func NewPatchAttributeBody(key string, value string) *PatchAttributeBody {
+	if key == "contactName" {
+		return &PatchAttributeBody{
+			ContactName: value,
+		}
+	} else if key == "contactEmail" {
+		return &PatchAttributeBody{
+			ContactEmail: value,
+		}
+	}
+	return nil
+}

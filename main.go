@@ -100,7 +100,7 @@ func main() {
 
 	if ATTRIBUTES_FILE != "" {
 		fmt.Printf("Process attributes based on file %s \n", ATTRIBUTES_FILE)
-		if err := client.handleAttributes(CATEGORIES_FILE); err != nil {
+		if err := client.handleAttributes(ATTRIBUTES_FILE); err != nil {
 			panic(err.Error())
 		}
 	}

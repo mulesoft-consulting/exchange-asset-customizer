@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/mulesoft-consulting/cloudhub-client-go/authorization v0.1.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20210218202405-ba52d332ba99 // indirect
 	google.golang.org/appengine v1.6.6 // indirect

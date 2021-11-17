@@ -189,23 +189,27 @@ func (c *ExchangeClient) patchAssetAttributes(organizationId string, assetName s
 	if err != nil {
 		return err
 	}
+
+	data := `{"` + key + `":"` + value + `"}`
+
 	client := request.Client{
 		Context: *c.ctx,
 		URL:     u.String(),
 		Method:  request.PATCH,
 		Bearer:  c.access_token,
-		JSON:    "{\"" + key + "\":\"" + value + "\"}",
+		JSON:    data,
 	}
+
 	resp := client.Send()
 	if !resp.OK() {
 		return resp.Error()
 	}
-	var result interface{}
-	if err := resp.Scan(&result).Error(); err != nil {
-		return err
-	}
-	respBody, _ := json.Marshal(result)
 	if statusCode := resp.Response().StatusCode; statusCode >= 400 {
+		var result interface{}
+		if err := resp.Scan(&result).Error(); err != nil {
+			return err
+		}
+		respBody, _ := json.Marshal(result)
 		var details string
 		message := "[ERROR] PATCH attributes responded with status " + fmt.Sprint(statusCode)
 		details = string(respBody)
