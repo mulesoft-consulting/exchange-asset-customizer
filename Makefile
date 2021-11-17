@@ -3,7 +3,7 @@ HOSTNAME=anypoint.mulesoft.com
 NAMESPACE=automation
 NAME=exchange
 BINARY=${NAME}-asset-customizer
-VERSION=0.2
+VERSION=0.0.1
 OS_ARCH=darwin_amd64
 
 default: build
